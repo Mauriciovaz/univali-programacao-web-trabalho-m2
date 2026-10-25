@@ -18,7 +18,7 @@ import { HandHeart } from '@lucide/vue';
             <ul class="c-header nav">
                 <li>
                     <RouterLink to="/">
-                         Inicio
+                        Inicio
                     </RouterLink>
                 </li>
             </ul>
@@ -83,7 +83,9 @@ import { HandHeart } from '@lucide/vue';
     &.nav {
         gap: 1rem;
         font-size: 1.2rem;
-
+        li {
+            list-style: none;
+        }
         a {
             gap: 0.2rem;
             align-items: center;

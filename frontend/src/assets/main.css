@@ -11,7 +11,6 @@
 
 * {
   box-sizing: border-box;
-  overflow: hidden;
   margin: 0;
   padding: 0;
   transition: 300ms;
@@ -23,11 +22,10 @@ html {
 }
 
 body {
-  max-width: 100vw;
-  max-height: 100vh;
   width: 100%;
   height: 100%;
   background-color: var(--green-light);
+  overflow-x: hidden;
 }
 
 #app {}

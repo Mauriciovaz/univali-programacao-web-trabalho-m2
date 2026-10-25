@@ -7,7 +7,7 @@ import { MoveRight } from '@lucide/vue';
         <div class="c-hero wrapper">
             <h1>Pequenas ações <br> geram grandes <br> mudanças</h1>
             <h2>Doação, voluntariado e apoio a causas <br> que fazem a diferença na vida de muitas pessoas.</h2>
-            <ButtonComponent :text="`Quero ajudar`" :icon="MoveRight"/>
+            <ButtonComponent :text="`Quero ajudar`" :icon="MoveRight" />
         </div>
     </div>
 </template>
@@ -25,9 +25,9 @@ import { MoveRight } from '@lucide/vue';
         background-repeat: no-repeat;
         background-size: cover;
         position: relative;
-        z-index: 0;
+        background-position: center;
         margin-top: 80px;
-        
+        z-index: 0;
         &::before{
             content: '';
             width: 100%;
@@ -36,7 +36,7 @@ import { MoveRight } from '@lucide/vue';
             display: flex;
             background-color: var(--green-dark);
             z-index: 1;
-            filter: opacity(0.5);
+            filter: opacity(0.4);
         }
     }
 
@@ -49,13 +49,13 @@ import { MoveRight } from '@lucide/vue';
         gap: 1rem;
         z-index: 2;
         h1 {
-            font-size: 6rem;
+            font-size: 5rem;
             font-weight: 700;
             color: var(--white);
         }
 
         h2 {
-            font-size: 2rem;
+            font-size: 1.5rem;
             color: var(--green-light);
         }
     }
