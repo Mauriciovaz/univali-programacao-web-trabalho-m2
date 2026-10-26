@@ -9,7 +9,7 @@ const campaignsArr = ref([]);
 
 onMounted(async () => {
   try {
-    const res = await fetch('http://192.168.15.18:3000/api/campanhas');
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/campanhas`);
 
     campaignsArr.value = await res.json();
     console.log(campaignsArr);
@@ -30,7 +30,7 @@ onMounted(async () => {
         <div class="s-campaigns campaigns">
           <CardCampaignComponent v-for="campaign in campaignsArr" :key="campaign.id" :image="campaign.imagemUrl"
             :category="campaign.categoria" :title="campaign.titulo" :description="campaign.descricao"
-            :value="campaign.valorArrecadado" :meta="campaign.metaValor" :volunteers="campaign.vagasVoluntarios" :status="campaign.status" />
+            :value="campaign.valorArrecadado" :meta="campaign.metaValor" :volunteers="campaign.vagasVoluntarios" :status="campaign.status" :id="campaign.id"/>
         </div>
       </div>
     </div>

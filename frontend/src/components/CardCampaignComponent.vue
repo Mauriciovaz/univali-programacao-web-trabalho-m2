@@ -3,6 +3,9 @@ import { UsersRound, MoveRight } from '@lucide/vue';
 import ButtonComponent from './ButtonComponent.vue';
 
 const props = defineProps({
+    id: {
+        required: true
+    },
     image: {
         required: true
     },
@@ -24,7 +27,7 @@ const props = defineProps({
     volunteers: {
         required: true
     },
-     status: {
+    status: {
         required: true
     },
 });
@@ -49,7 +52,9 @@ const result = Number((100 * Number(props.value)) / Number(props.meta)).toFixed(
             <div class="donors">
                 <UsersRound /> <span>{{ volunteers }}</span> vagas voluntários
             </div>
-            <ButtonComponent :text="'Saiba Mais'" :icon="MoveRight" />
+            <RouterLink :to="`/campanha/${id}`">
+                <ButtonComponent :text="'Saiba Mais'" :icon="MoveRight" />
+            </RouterLink>
         </div>
     </div>
 </template>
@@ -65,8 +70,8 @@ const result = Number((100 * Number(props.value)) / Number(props.meta)).toFixed(
     height: 100%;
     justify-content: space-between;
 
-    &.encerrada{
-    filter:  grayscale(0.9);
+    &.encerrada {
+        filter: grayscale(0.9);
     }
 
     .image {
@@ -82,7 +87,7 @@ const result = Number((100 * Number(props.value)) / Number(props.meta)).toFixed(
             object-fit: cover;
         }
 
-        .status{
+        .status {
             position: absolute;
             top: 1rem;
             right: 1rem;
@@ -92,7 +97,7 @@ const result = Number((100 * Number(props.value)) / Number(props.meta)).toFixed(
             padding: 0.5rem 1rem 0.5rem 1rem;
             border-radius: 1rem;
 
-            &.encerrada{
+            &.encerrada {
                 background-color: var(--gray);
             }
         }
@@ -143,10 +148,17 @@ const result = Number((100 * Number(props.value)) / Number(props.meta)).toFixed(
             border-radius: 7px;
         }
 
+        @keyframes prog {
+            0% {
+                width: 0%;
+            }
+        }
+
         progress::-webkit-progress-value {
             color: red;
             border-radius: 1rem;
             background-color: var(--green);
+            animation: prog 1s;
         }
 
         .meta {
@@ -170,6 +182,10 @@ const result = Number((100 * Number(props.value)) / Number(props.meta)).toFixed(
             padding: 0.7rem 1.5rem 0.7rem 1.5rem;
             gap: 0.7rem;
             justify-content: center;
+        }
+
+        a::after{
+            display: none;
         }
     }
 }
