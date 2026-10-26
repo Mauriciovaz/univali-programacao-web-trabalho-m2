@@ -3,7 +3,22 @@ import CardCampaignComponent from '@/components/CardCampaignComponent.vue';
 import CardTodoComponent from '@/components/CardTodoComponent.vue';
 import HeroComponent from '@/components/HeroComponent.vue';
 import { Heart, UserGroup, Plus, Sprout, Users, HeartHandshake } from '@lucide/vue';
-const campaigns = Array.from({ length: 3 });
+import { onMounted, ref } from 'vue';
+
+const campaignsArr = ref([]);
+
+onMounted(async () => {
+  try {
+    const res = await fetch('http://192.168.15.18:3000/api/campanhas');
+
+    campaignsArr.value = await res.json();
+    console.log(campaignsArr);
+
+  } catch (err) {
+    console.log(err);
+  }
+
+});
 </script>
 
 <template>
@@ -13,7 +28,9 @@ const campaigns = Array.from({ length: 3 });
       <div class="s-campaigns wrapper">
         <p class="s-campaigns title">Campanhas</p>
         <div class="s-campaigns campaigns">
-          <CardCampaignComponent v-for="(_, index) in campaigns" :key="index" />
+          <CardCampaignComponent v-for="campaign in campaignsArr" :key="campaign.id" :image="campaign.imagemUrl"
+            :category="campaign.categoria" :title="campaign.titulo" :description="campaign.descricao"
+            :value="campaign.valorArrecadado" :meta="campaign.metaValor" :volunteers="campaign.vagasVoluntarios" :status="campaign.status" />
         </div>
       </div>
     </div>
@@ -157,6 +174,7 @@ const campaigns = Array.from({ length: 3 });
       gap: 2rem;
       width: 100%;
       justify-content: center;
+
       .icon {
         background-color: var(--green-light);
         width: 6rem;
@@ -168,13 +186,13 @@ const campaigns = Array.from({ length: 3 });
         border-radius: 16rem;
       }
 
-      p{
+      p {
         font-size: 1.2rem;
         font-weight: 700;
         color: var(--green-dark);
       }
 
-      &.border{
+      &.border {
         border-right: 0.5px solid var(--green-dark);
       }
     }

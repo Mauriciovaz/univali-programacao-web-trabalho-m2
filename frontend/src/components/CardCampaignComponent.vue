@@ -1,24 +1,53 @@
 <script setup>
 import { UsersRound, MoveRight } from '@lucide/vue';
 import ButtonComponent from './ButtonComponent.vue';
+
+const props = defineProps({
+    image: {
+        required: true
+    },
+    category: {
+        required: true
+    },
+    title: {
+        required: true
+    },
+    description: {
+        required: true
+    },
+    value: {
+        required: true
+    },
+    meta: {
+        required: true
+    },
+    volunteers: {
+        required: true
+    },
+     status: {
+        required: true
+    },
+});
+
+const result = Number((100 * Number(props.value)) / Number(props.meta)).toFixed(0);
+
 </script>
 <template>
-    <div class="c-campaign-card">
+    <div :class="`c-campaign-card ${status}`">
         <div class="image">
-            <img src="https://static.nationalgeographicbrasil.com/files/styles/image_3200/public/01-domesticated-dog.webp?w=760&h=507"
-                alt="">
+            <img :src="image">
+            <span :class="`status ${status}`">{{ status }}</span>
         </div>
         <div class="content">
             <div class="tags">
-                <span>Doação</span>
-                <span>Doação</span>
+                <span>{{ category }}</span>
             </div>
-            <div class="title">Alimente os animais de rua</div>
-            <div class="description">Ração, medicamentos e cuidados veterinários.</div>
-            <progress max="100" value="42"></progress>
-            <p class="meta">42% da meta</p>
+            <div class="title">{{ title }}</div>
+            <div class="description">{{ description }}</div>
+            <progress max="100" :value="Number(result)"></progress>
+            <p class="meta">{{ result }}% da meta</p>
             <div class="donors">
-                <UsersRound /> <span>532</span> doadores
+                <UsersRound /> <span>{{ volunteers }}</span> vagas voluntários
             </div>
             <ButtonComponent :text="'Saiba Mais'" :icon="MoveRight" />
         </div>
@@ -36,15 +65,38 @@ import ButtonComponent from './ButtonComponent.vue';
     height: 100%;
     justify-content: space-between;
 
+    &.encerrada{
+    filter:  grayscale(0.9);
+    }
+
     .image {
         width: 100%;
         height: 250px;
+        position: relative;
 
         img {
             width: 100%;
             border-top-left-radius: 1rem;
             border-top-right-radius: 1rem;
+            height: 100%;
+            object-fit: cover;
         }
+
+        .status{
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            color: var(--white);
+            font-weight: 700;
+            background-color: var(--green);
+            padding: 0.5rem 1rem 0.5rem 1rem;
+            border-radius: 1rem;
+
+            &.encerrada{
+                background-color: var(--gray);
+            }
+        }
+
     }
 
     .content {

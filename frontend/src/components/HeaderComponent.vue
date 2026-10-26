@@ -11,8 +11,8 @@ import { HandHeart } from '@lucide/vue';
                     <HandHeart color="var(--green)" width="32px" height="32px" />
                 </div>
                 <div class="c-header logo text">
-                    <p class="c-header logo text title">Juntos</p>
-                    <p class="c-header logo text subtitle">por mais</p>
+                    <p class="c-header logo text title">Ponto</p>
+                    <p class="c-header logo text subtitle">de apoio</p>
                 </div>
             </div>
             <ul class="c-header nav">
