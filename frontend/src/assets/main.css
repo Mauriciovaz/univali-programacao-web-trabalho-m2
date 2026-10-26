@@ -19,6 +19,7 @@
 html {
   font-size: 16px;
   font-family: "Inter";
+  scroll-behavior: smooth;
 }
 
 body {
@@ -28,32 +29,47 @@ body {
   overflow-x: hidden;
 }
 
-#app {}
 
-@keyframes animationHover{
-  0%{
+
+@keyframes animationHover {
+  0% {
     width: 0px;
   }
-  100%{
+
+  100% {
     width: 100%;
   }
 }
 
-a{
+@keyframes intro {
+  0% {
+    margin-left: -100%;
+  }
+
+  100% {
+    margin-left: 0%;
+  }
+}
+
+#app {}
+
+a {
   cursor: pointer;
   position: relative;
   color: var(--white);
   text-decoration: none;
 }
-a:hover{
+
+a:hover {
   color: var(--green);
 
-  &::after{
+  &::after {
     animation: animationHover 300ms;
     width: 100%;
   }
 }
-a::after{
+
+a::after {
   content: '';
   width: 0px;
   height: 2px;

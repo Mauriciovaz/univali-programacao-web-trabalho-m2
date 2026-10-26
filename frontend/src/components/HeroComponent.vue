@@ -48,6 +48,8 @@ import { MoveRight } from '@lucide/vue';
         flex-direction: column;
         gap: 1rem;
         z-index: 2;
+        animation: intro 1s;
+        max-height: 440px;
         h1 {
             font-size: 5rem;
             font-weight: 700;

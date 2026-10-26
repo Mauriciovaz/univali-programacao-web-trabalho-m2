@@ -19,6 +19,8 @@ onMounted(async () => {
 
     } catch (err) {
         console.log(err);
+    } finally {
+        globalThis.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     }
 });
 
@@ -60,7 +62,7 @@ onMounted(async () => {
                                 <p class="title">Período</p>
                                 <p>de {{
                                     `${String(data.dataInicio).split('-')[2]}/${String(data.dataInicio).split('-')[1]}/${String(data.dataInicio).split('-')[0]}`
-                                    }} a {{
+                                }} a {{
                                         `${String(data.dataFim).split('-')[2]}/${String(data.dataFim).split('-')[1]}/${String(data.dataFim).split('-')[0]}`
                                     }}</p>
                             </div>
@@ -72,8 +74,8 @@ onMounted(async () => {
             </div>
         </div>
 
-        <ToDoComponent/>
-        <InfoComponent/>
+        <ToDoComponent />
+        <InfoComponent />
     </div>
 </template>
 

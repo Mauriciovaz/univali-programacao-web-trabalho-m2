@@ -18,6 +18,11 @@ const router = createRouter({
       path: '/campanha/:id',
       name: 'campaign',
       component: () => import('../views/CampaignView.vue'),
+    },
+    {
+      path: '/cadastrar',
+      name: 'register',
+      component: () => import('../views/RegisterView.vue'),
     }
   ],
 });
