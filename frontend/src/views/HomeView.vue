@@ -26,6 +26,7 @@ const campaigns = Array.from({ length: 3 });
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: var(--white);
   }
 
   &.wrapper {
@@ -44,9 +45,12 @@ const campaigns = Array.from({ length: 3 });
     font-weight: 700;
   }
 
-  &.campaigns{
+  &.campaigns {
+    width: 100%;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, auto);
+    gap: 1rem;
+    justify-content: space-between
   }
 }
 </style>
