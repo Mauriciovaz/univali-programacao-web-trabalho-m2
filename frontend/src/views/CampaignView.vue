@@ -1,5 +1,7 @@
 <script setup>
 import ButtonComponent from '@/components/ButtonComponent.vue';
+import InfoComponent from '@/components/InfoComponent.vue';
+import ToDoComponent from '@/components/ToDoComponent.vue';
 import { CalendarDays, CircleDollarSign, MoveRight } from '@lucide/vue';
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
@@ -25,48 +27,53 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="p-campaign container">
-        <div class="p-campaign wrapper">
-            <div class="info">
-                <img :src="data.imagemUrl" alt="">
-                <div class="content">
-                    <div class="tags">
-                        <span>{{ data.categoria }}</span>
-                    </div>
-                    <div class="title">{{ data.titulo }}</div>
-                    <div class="description">{{ data.descricao }}</div>
-
-                    <div class="result">
-                        <progress max="100" :value="Number(result)"></progress>
-                        <div> <span>{{ result }}%</span>
-                            <p>da meta</p>
+    <div>
+        <div class="p-campaign container">
+            <div class="p-campaign wrapper">
+                <div class="info">
+                    <img :src="data.imagemUrl" alt="">
+                    <div class="content">
+                        <div class="tags">
+                            <span>{{ data.categoria }}</span>
                         </div>
-                    </div>
+                        <div class="title">{{ data.titulo }}</div>
+                        <div class="description">{{ data.descricao }}</div>
 
-
-                    <div class="donates">
-                        <div class="value">
-                            <CircleDollarSign /> <span>R$ {{ data.valorArrecadado }}</span> arrecadados
+                        <div class="result">
+                            <progress max="100" :value="Number(result)"></progress>
+                            <div> <span>{{ result }}%</span>
+                                <p>da meta</p>
+                            </div>
                         </div>
-                        <div class="goal"> Meta: R$ {{ data.metaValor }}</div>
-                    </div>
 
-                    <div class="period">
-                        <CalendarDays size="4rem" />
-                        <div class="content">
-                            <p class="title">Período</p>
-                            <p>de {{
-                                `${String(data.dataInicio).split('-')[2]}/${String(data.dataInicio).split('-')[1]}/${String(data.dataInicio).split('-')[0]}`
-                            }} a {{
-                                    `${String(data.dataFim).split('-')[2]}/${String(data.dataFim).split('-')[1]}/${String(data.dataFim).split('-')[0]}`
-                                }}</p>
+
+                        <div class="donates">
+                            <div class="value">
+                                <CircleDollarSign /> <span>R$ {{ data.valorArrecadado }}</span> arrecadados
+                            </div>
+                            <div class="goal"> Meta: R$ {{ data.metaValor }}</div>
                         </div>
+
+                        <div class="period">
+                            <CalendarDays size="4rem" />
+                            <div class="content">
+                                <p class="title">Período</p>
+                                <p>de {{
+                                    `${String(data.dataInicio).split('-')[2]}/${String(data.dataInicio).split('-')[1]}/${String(data.dataInicio).split('-')[0]}`
+                                    }} a {{
+                                        `${String(data.dataFim).split('-')[2]}/${String(data.dataFim).split('-')[1]}/${String(data.dataFim).split('-')[0]}`
+                                    }}</p>
+                            </div>
+                        </div>
+                        <ButtonComponent :text="'Fazer uma doação'" :icon="MoveRight"
+                            v-if="data.categoria === 'roupas' || data.categoria === 'alimentos'" />
                     </div>
-                    <ButtonComponent :text="'Fazer uma doação'" :icon="MoveRight"
-                        v-if="data.categoria === 'roupas' || data.categoria === 'alimentos'" />
                 </div>
             </div>
         </div>
+
+        <ToDoComponent/>
+        <InfoComponent/>
     </div>
 </template>
 
