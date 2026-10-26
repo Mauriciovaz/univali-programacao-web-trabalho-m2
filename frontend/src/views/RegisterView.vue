@@ -1,6 +1,21 @@
 <script setup>
-import { Heart, Plus, Users } from '@lucide/vue';
+import ButtonComponent from '@/components/ButtonComponent.vue';
+import { Heart, Plus, Users, MoveRight } from '@lucide/vue';
+import { ref } from 'vue';
 
+let optionSelect = ref('donate');
+let donateObj = ref({
+    value: 0,
+    name: '',
+    email: ''
+});
+const changeOption = (option) => {
+    optionSelect.value = option;
+};
+
+const changeDonateObj = (value) => {
+    donateObj.value.value = value;
+};
 </script>
 
 <template>
@@ -19,41 +34,56 @@ import { Heart, Plus, Users } from '@lucide/vue';
                 </div>
 
                 <div class="options">
-                    <div class="option donate select">
+                    <div :class="`option donate ${optionSelect === 'donate' ? 'select' : ''}`"
+                        @click="() => changeOption('donate')">
                         <Heart size="1.4rem" />
                         Doar
                     </div>
-                    <div class="option volunteering">
+                    <div :class="`option volunteering ${optionSelect === 'volunteering' ? 'select' : ''}`"
+                        @click="() => changeOption('volunteering')">
                         <Users size="1.4rem" />
                         Voluntariado
                     </div>
-                    <div class="option register">
+                    <div :class="`option register ${optionSelect === 'register' ? 'select' : ''}`"
+                        @click="() => changeOption('register')">
                         <Plus size="1.4rem" />
                         Cadastrar causa
                     </div>
                 </div>
 
                 <div class="form container">
-                    <div class="donate">
+                    <div class="donate" v-if="optionSelect === 'donate'">
                         <h2>Dados da Doação</h2>
-                        <p>Valor da doação</p>
-                        <div class="values">
-                            <div class="value">
-                                R$ 25
+                        <form>
+                            <p>Valor da doação</p>
+                            <div class="values">
+                                <div :class="`value ${donateObj.value === 25 ? 'select' : ''}`" @click="() => changeDonateObj(25)">
+                                    R$ 25
+                                </div>
+                                <div :class="`value ${donateObj.value === 50 ? 'select' : ''}`" @click="() => changeDonateObj(50)">
+                                    R$ 50
+                                </div>
+                                <div :class="`value ${donateObj.value === 100 ? 'select' : ''}`" @click="() => changeDonateObj(100)">
+                                    R$ 100
+                                </div>
+                                <div :class="`value ${donateObj.value === 200 ? 'select' : ''}`" @click="() => changeDonateObj(200)">
+                                    R$ 200
+                                </div>
+                                <div :class="`value ${donateObj.value === 300 ? 'select' : ''}`" @click="() => changeDonateObj(300)">
+                                    R$ 300
+                                </div>
                             </div>
-                            <div class="value select">
-                                R$ 50
-                            </div>
-                            <div class="value">
-                                R$ 100
-                            </div>
-                            <div class="value">
-                                R$ 200
-                            </div>
-                            <div class="value">
-                                R$ 300
-                            </div>
-                        </div>
+                            <p>Nome Completo</p>
+                            <input type="text" id="name">
+
+                            <p>E-mail</p>
+                            <input type="text" id="email">
+
+                            <ButtonComponent :text="'Enviar'" :icon="MoveRight" :type="'button'" @click="(e) => {
+                                e.preventDefault();
+                                // submit
+                            }"/>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -143,7 +173,7 @@ import { Heart, Plus, Users } from '@lucide/vue';
             &.container {
                 background-color: var(--white);
                 border-radius: 1rem;
-                padding: 1rem;
+                padding: 2rem;
                 color: var(--green-dark);
 
                 .donate {
@@ -151,33 +181,44 @@ import { Heart, Plus, Users } from '@lucide/vue';
                     flex-direction: column;
                     gap: 1rem;
 
-                    .values {
+                    form {
                         display: flex;
-                        justify-content: space-between;
-                        align-items: center;
+                        flex-direction: column;
                         gap: 1rem;
 
-                        .value {
-                            width: 100%;
+                        .values {
                             display: flex;
-                            justify-content: center;
+                            justify-content: space-between;
                             align-items: center;
-                            font-weight: 700;
-                            padding: 1rem 0;
-                            border-radius: 1rem;
-                            border: 1px solid var(--green-dark);
-                            cursor: pointer;
-                            &:hover,
-                            &.select {
-                                background-color: var(--green-dark);
-                                color: var(--white);
+                            gap: 1rem;
+
+                            .value {
+                                width: 100%;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                font-weight: 700;
+                                padding: 1rem 0;
+                                border-radius: 1rem;
+                                border: 1px solid var(--green-dark);
+                                cursor: pointer;
+
+                                &:hover,
+                                &.select {
+                                    background-color: var(--green-dark);
+                                    color: var(--white);
+                                }
                             }
                         }
                     }
-
                 }
-
             }
+        }
+
+        :deep(.c-button) {
+            width: fit-content;
+            padding: 1rem 2rem 1rem 2rem;
+            gap: 0.7rem;
         }
     }
 }
