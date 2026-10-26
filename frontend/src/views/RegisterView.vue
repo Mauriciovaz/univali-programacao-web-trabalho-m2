@@ -1,7 +1,10 @@
 <script setup>
 import ButtonComponent from '@/components/ButtonComponent.vue';
-import { Heart, Plus, Users, MoveRight } from '@lucide/vue';
-import { ref } from 'vue';
+import { Heart, Plus, Users, MoveRight, TriangleAlert } from '@lucide/vue';
+import { onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
 
 let optionSelect = ref('donate');
 let donateObj = ref({
@@ -16,6 +19,38 @@ const changeOption = (option) => {
 const changeDonateObj = (value) => {
     donateObj.value.value = value;
 };
+
+const campaignData = ref({});
+let type = ref('');
+
+onMounted(async () => {
+    try {
+        const campaign = route.query.campanha;
+
+        if (!campaign) {
+            optionSelect.value = 'register';
+        } else {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/campanhas/${campaign}`);
+            const data = await res.json();
+            campaignData.value = data;
+            if (data.categoria === 'voluntariado') {
+                type.value = 'volunteering';
+                optionSelect.value = 'volunteering';
+            } else {
+                type.value = 'donate';
+                optionSelect.value = 'donate';
+            }
+        }
+
+
+    } catch (err) {
+        console.log(err);
+    } finally {
+        globalThis.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    }
+
+});
+
 </script>
 
 <template>
@@ -34,22 +69,24 @@ const changeDonateObj = (value) => {
                 </div>
 
                 <div class="options">
-                    <div :class="`option donate ${optionSelect === 'donate' ? 'select' : ''}`"
+                    <div :class="`option donate ${optionSelect === 'donate' ? 'select' : ''} ${type === 'volunteering' || !type || campaignData.status === 'encerrada' ? 'disabled' : ''}`"
                         @click="() => changeOption('donate')">
                         <Heart size="1.4rem" />
                         Doar
                     </div>
-                    <div :class="`option volunteering ${optionSelect === 'volunteering' ? 'select' : ''}`"
+                    <div :class="`option volunteering ${optionSelect === 'volunteering' ? 'select' : ''} ${!type || campaignData.status === 'encerrada' ? 'disabled' : ''}`"
                         @click="() => changeOption('volunteering')">
                         <Users size="1.4rem" />
                         Voluntariado
                     </div>
-                    <div :class="`option register ${optionSelect === 'register' ? 'select' : ''}`"
+                    <div :class="`option register ${optionSelect === 'register' ? 'select' : ''} ${!!type ? 'disabled' : ''}`"
                         @click="() => changeOption('register')">
                         <Plus size="1.4rem" />
                         Cadastrar causa
                     </div>
                 </div>
+
+                <p v-if="campaignData.status === 'encerrada'" class="warning"><TriangleAlert size="1.7rem"/> Campanha enecrrada, não é possível realizar doações ou se voluntariar</p>
 
                 <div class="form container">
                     <div class="donate" v-if="optionSelect === 'donate'">
@@ -57,19 +94,24 @@ const changeDonateObj = (value) => {
                         <form>
                             <p>Valor da doação</p>
                             <div class="values">
-                                <div :class="`value ${donateObj.value === 25 ? 'select' : ''}`" @click="() => changeDonateObj(25)">
+                                <div :class="`value ${donateObj.value === 25 ? 'select' : ''}`"
+                                    @click="() => changeDonateObj(25)">
                                     R$ 25
                                 </div>
-                                <div :class="`value ${donateObj.value === 50 ? 'select' : ''}`" @click="() => changeDonateObj(50)">
+                                <div :class="`value ${donateObj.value === 50 ? 'select' : ''}`"
+                                    @click="() => changeDonateObj(50)">
                                     R$ 50
                                 </div>
-                                <div :class="`value ${donateObj.value === 100 ? 'select' : ''}`" @click="() => changeDonateObj(100)">
+                                <div :class="`value ${donateObj.value === 100 ? 'select' : ''}`"
+                                    @click="() => changeDonateObj(100)">
                                     R$ 100
                                 </div>
-                                <div :class="`value ${donateObj.value === 200 ? 'select' : ''}`" @click="() => changeDonateObj(200)">
+                                <div :class="`value ${donateObj.value === 200 ? 'select' : ''}`"
+                                    @click="() => changeDonateObj(200)">
                                     R$ 200
                                 </div>
-                                <div :class="`value ${donateObj.value === 300 ? 'select' : ''}`" @click="() => changeDonateObj(300)">
+                                <div :class="`value ${donateObj.value === 300 ? 'select' : ''}`"
+                                    @click="() => changeDonateObj(300)">
                                     R$ 300
                                 </div>
                             </div>
@@ -82,7 +124,7 @@ const changeDonateObj = (value) => {
                             <ButtonComponent :text="'Enviar'" :icon="MoveRight" :type="'button'" @click="(e) => {
                                 e.preventDefault();
                                 // submit
-                            }"/>
+                            }" />
                         </form>
                     </div>
                 </div>
@@ -166,6 +208,11 @@ const changeDonateObj = (value) => {
                     background-color: var(--green-dark);
                     color: var(--white);
                 }
+
+                &.disabled {
+                    pointer-events: none;
+                    filter: opacity(0.5);
+                }
             }
         }
 
@@ -213,6 +260,15 @@ const changeDonateObj = (value) => {
                     }
                 }
             }
+        }
+
+        .warning{
+            font-size: 1.2rem;
+            color: var(--green-dark);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         :deep(.c-button) {

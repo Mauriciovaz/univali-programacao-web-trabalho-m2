@@ -9,9 +9,10 @@ import { useRoute } from 'vue-router';
 const route = useRoute();
 const data = ref({});
 let result = 0;
+
+const id = route.params.id;
 onMounted(async () => {
     try {
-        const id = route.params.id;
         const res = await fetch(`${import.meta.env.VITE_API_URL}/campanhas/${id}`);
         data.value = await res.json();
 
@@ -62,13 +63,15 @@ onMounted(async () => {
                                 <p class="title">Período</p>
                                 <p>de {{
                                     `${String(data.dataInicio).split('-')[2]}/${String(data.dataInicio).split('-')[1]}/${String(data.dataInicio).split('-')[0]}`
-                                }} a {{
+                                    }} a {{
                                         `${String(data.dataFim).split('-')[2]}/${String(data.dataFim).split('-')[1]}/${String(data.dataFim).split('-')[0]}`
                                     }}</p>
                             </div>
                         </div>
-                        <ButtonComponent :text="'Fazer uma doação'" :icon="MoveRight"
-                            v-if="data.categoria === 'roupas' || data.categoria === 'alimentos'" />
+                        <RouterLink :to="`/cadastrar?campanha=${id}`">
+                            <ButtonComponent :text="'Fazer uma doação'" :icon="MoveRight"
+                                v-if="data.categoria === 'roupas' || data.categoria === 'alimentos'" />
+                        </RouterLink>
                     </div>
                 </div>
             </div>
@@ -251,6 +254,10 @@ onMounted(async () => {
                     font-size: 1.5rem;
                 }
             }
+        }
+
+        a::after{
+            display: none;
         }
     }
 
