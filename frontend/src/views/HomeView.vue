@@ -36,19 +36,19 @@ const campaigns = Array.from({ length: 3 });
         <div class="s-info content">
           <div class="item border">
             <div class="icon">
-              <Sprout :size="'2rem'" />
+              <Sprout :size="'3rem'" />
             </div>
             <p>Transforma <br /> vidas</p>
           </div>
           <div class="item border">
             <div class="icon">
-              <Users :size="'2rem'" />
+              <Users :size="'3rem'" />
             </div>
             <p>Fortalece <br /> comunidades</p>
           </div>
           <div class="item">
             <div class="icon">
-              <HeartHandshake :size="'2rem'" />
+              <HeartHandshake :size="'3rem'" />
             </div>
             <p>Constrói um <br /> futuro melhor</p>
           </div>

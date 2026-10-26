@@ -28,7 +28,7 @@ import ButtonComponent from './ButtonComponent.vue';
 .c-campaign-card {
     display: flex;
     flex-direction: column;
-    width: 23rem;
+    width: 24rem;
     border-radius: 1rem;
     background-color: var(--green-light);
     max-height: 580px;
