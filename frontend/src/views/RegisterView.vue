@@ -4,9 +4,15 @@ import InfoComponent from '@/components/InfoComponent.vue';
 import ButtonComponent from '@/components/ButtonComponent.vue';
 import { Heart, Plus, Users, MoveRight, TriangleAlert } from '@lucide/vue';
 import { onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
+const router = useRouter();
+
+// Exibe a mensagem de sucesso por alguns instantes e redireciona para os detalhes da campanha
+const redirectToCampaign = (id) => {
+    setTimeout(() => router.push(`/campanha/${id}`), 1500);
+};
 
 let message = ref('');
 let messageType = ref('success');
@@ -93,6 +99,11 @@ onMounted(async () => {
         } else {
             const res = await fetch(`${import.meta.env.VITE_API_URL}/campanhas/${campaign}`);
             const data = await res.json();
+            if (!res.ok) {
+                message.value = data.erro;
+                messageType.value = 'error';
+                return;
+            }
             campaignData.value = data;
             if (data.categoria === 'voluntariado') {
                 type.value = 'volunteering';
@@ -161,6 +172,8 @@ async function newDonate() {
                         email: '',
                         phone: '',
                     };
+
+                    redirectToCampaign(route.query.campanha);
                 }
             }
         }
@@ -209,6 +222,8 @@ async function newVolunteering() {
                     phone: '',
                     availability: ''
                 };
+
+                redirectToCampaign(route.query.campanha);
             }
         }
     } catch (err) {
@@ -263,6 +278,8 @@ async function newRegister() {
                     vagasVoluntarios: null,
                     imagemUrl: ''
                 };
+
+                redirectToCampaign(result.id);
             }
         }
     } catch (err) {

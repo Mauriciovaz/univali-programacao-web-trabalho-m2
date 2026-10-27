@@ -2,7 +2,7 @@ const campanhas = [
   {
     id: 1,
     titulo: 'Agasalho Solidário 2026',
-    descricao: 'Arrecadação de roupas de frio e cobertores para famílias do bairro Paranaguamirim.',
+    descricao: 'Arrecadação de roupas de frio e cobertores para famílias do bairro Cordeiros.',
     categoria: 'roupas',          // roupas | alimentos | dinheiro | voluntariado
     metaValor: 5000,
     valorArrecadado: 1600,
@@ -41,7 +41,7 @@ const campanhas = [
   {
     id: 4,
     titulo: 'Natal Sem Fome',
-    descricao: 'Distribuição de ceias de Natal para famílias em situação de vulnerabilidade na região norte de Joinville.',
+    descricao: 'Distribuição de ceias de Natal para famílias em situação de vulnerabilidade na região norte de Itajaí.',
     categoria: 'alimentos',
     metaValor: 8000,
     valorArrecadado: 1150,
@@ -54,7 +54,7 @@ const campanhas = [
   {
     id: 5,
     titulo: 'Material Escolar 2027',
-    descricao: 'Compra de kits de material escolar para alunos da rede pública do bairro Itaum.',
+    descricao: 'Compra de kits de material escolar para alunos da rede pública do bairro São Vicente.',
     categoria: 'dinheiro',
     metaValor: 6000,
     valorArrecadado: 1700,

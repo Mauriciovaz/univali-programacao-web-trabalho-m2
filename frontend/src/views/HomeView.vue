@@ -6,20 +6,27 @@ import ToDoComponent from '@/components/ToDoComponent.vue';
 import { onMounted, ref } from 'vue';
 
 const campaignsArr = ref([]);
+const statusFilter = ref('');
 
-onMounted(async () => {
+async function getCampaigns() {
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/campanhas`);
+    const query = statusFilter.value ? `?status=${statusFilter.value}` : '';
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/campanhas${query}`);
 
     campaignsArr.value = await res.json();
-    console.log(campaignsArr);
-
   } catch (err) {
     console.log(err);
-  } finally {
-    globalThis.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
   }
+}
 
+const changeFilter = (status) => {
+  statusFilter.value = status;
+  getCampaigns();
+};
+
+onMounted(async () => {
+  await getCampaigns();
+  globalThis.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
 });
 </script>
 
@@ -29,6 +36,12 @@ onMounted(async () => {
     <div class="s-campaigns container" id="campaigns">
       <div class="s-campaigns wrapper">
         <p class="s-campaigns title">Campanhas</p>
+        <div class="s-campaigns filters">
+          <div :class="`filter ${statusFilter === '' ? 'select' : ''}`" @click="() => changeFilter('')">Todas</div>
+          <div :class="`filter ${statusFilter === 'ativa' ? 'select' : ''}`" @click="() => changeFilter('ativa')">Ativas</div>
+          <div :class="`filter ${statusFilter === 'encerrada' ? 'select' : ''}`" @click="() => changeFilter('encerrada')">Encerradas</div>
+        </div>
+        <p v-if="campaignsArr.length === 0" class="s-campaigns empty">Nenhuma campanha encontrada</p>
         <div class="s-campaigns campaigns">
           <CardCampaignComponent v-for="campaign in campaignsArr" :key="campaign.id" :image="campaign.imagemUrl"
             :category="campaign.categoria" :title="campaign.titulo" :description="campaign.descricao"
@@ -67,6 +80,33 @@ onMounted(async () => {
     color: var(--green-dark);
     font-size: 1.8rem;
     font-weight: 700;
+  }
+
+  &.empty {
+    color: var(--green-dark);
+  }
+
+  &.filters {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    .filter {
+      padding: 0.6rem 1.5rem;
+      background-color: var(--white);
+      border: 1px solid var(--green-dark);
+      border-radius: 1rem;
+      cursor: pointer;
+      color: var(--green-dark);
+      font-weight: 700;
+      font-size: 1rem;
+
+      &:hover,
+      &.select {
+        background-color: var(--green-dark);
+        color: var(--white);
+      }
+    }
   }
 
   &.campaigns {

@@ -1,4 +1,5 @@
 import * as campanhaService from '../services/campanhaService.js';
+import AppError from '../utils/AppError.js';
 
 function listar(req, res, next) {
     try {
@@ -13,10 +14,9 @@ function buscaPorId(req, res, next) {
     try {
         const campanha = campanhaService.buscarPorId(req.params.id);
         if(!campanha) {
-            res.status(204).json({});
-        }else{
-            res.status(200).json(campanha);
+            throw new AppError('Campanha não encontrada', 404);
         }
+        res.status(200).json(campanha);
     } catch(err) {
         next(err);
     }

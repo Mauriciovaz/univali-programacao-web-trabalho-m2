@@ -10,6 +10,7 @@ const route = useRoute();
 const data = ref({});
 const donates = ref([]);
 const volunteers = ref([]);
+const notFound = ref(false);
 
 let result = 0;
 
@@ -22,6 +23,11 @@ onMounted(async () => {
             fetch(`${import.meta.env.VITE_API_URL}/doacoes?campanhaId=${id}`),
             fetch(`${import.meta.env.VITE_API_URL}/voluntarios?campanhaId=${id}`)
         ]);
+
+        if (resCampaign.status === 404) {
+            notFound.value = true;
+            return;
+        }
 
         const [campaign, donatesResult, volunteersResult] = await Promise.all([
             resCampaign.json(),
@@ -50,7 +56,14 @@ onMounted(async () => {
     <div>
         <div class="p-campaign container">
             <div class="p-campaign wrapper">
-                <div class="info">
+                <div class="not-found" v-if="notFound">
+                    <h2>Campanha não encontrada</h2>
+                    <p>A campanha que você procura não existe ou foi removida.</p>
+                    <RouterLink to="/">
+                        <ButtonComponent :text="'Ver campanhas'" :icon="MoveRight" />
+                    </RouterLink>
+                </div>
+                <div class="info" v-else>
                     <img :src="data.imagemUrl" alt="">
                     <div class="content">
                         <div class="tags">
@@ -93,7 +106,7 @@ onMounted(async () => {
                 </div>
             </div>
         </div>
-        <div class="s-donates container">
+        <div class="s-donates container" v-if="!notFound">
             <div class="s-donates wrapper">
                 <div class="donates">
                     <h2>Doações</h2>
@@ -160,6 +173,22 @@ onMounted(async () => {
         justify-content: start;
         flex-direction: column;
         gap: 1rem;
+
+        .not-found {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            color: var(--green-dark);
+
+            h2 {
+                font-size: 1.8rem;
+                font-weight: 700;
+            }
+
+            :deep(.c-button) {
+                width: fit-content;
+            }
+        }
 
         .info {
             display: grid;

@@ -28,6 +28,7 @@ function criar(dados) {
 
   const campanha = campanhaService.buscarPorId(dados.campanhaId);
 
+  if (!campanha) throw new AppError('Campanha não encontrada', 404);
   if (campanha.status !== 'ativa') throw new AppError('Campanha encerrada', 400);
   if (campanha.vagasVoluntarios <= 0) throw new AppError('Não há vagas de voluntariado', 400);
   const jaInscrito = voluntarios.some(v => v.campanhaId === campanha.id && v.email === dados.email);

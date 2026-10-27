@@ -49,7 +49,10 @@ function criar(dados) {
   validar(dados);
 
   const campanha = campanhaService.buscarPorId(dados.campanhaId);
-  if(!campanha || campanha.status !== 'ativa'){
+  if(!campanha){
+    throw new AppError('Campanha não encontrada', 404);
+  }
+  if(campanha.status !== 'ativa'){
     throw new AppError('Campanha não está ativa para doação', 400);
   }
 
