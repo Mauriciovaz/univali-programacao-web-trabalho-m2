@@ -50,4 +50,8 @@ const doacoes = [
   { id: 2, campanhaId: 2, doadorId: 2, tipo: 'item', valor: 0, descricao: '10 kg de arroz', data: '2026-06-02' }
 ];
 
-export { campanhas, doadores, doacoes };
+const voluntarios = [
+  { id: 1, campanhaId: 2, nome: 'Ana Lima', email: 'ana.lima@email.com', telefone: '(47) 97777-3333', disponibilidade: 'sabado' }
+];
+
+export { campanhas, doadores, doacoes, voluntarios };

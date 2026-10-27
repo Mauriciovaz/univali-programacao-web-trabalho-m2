@@ -14,4 +14,8 @@ router.post('/campanhas', campanhaController.criar);
 router.get('/doacoes', doacaoController.listar);
 router.post('/doacoes', doacaoController.criar);
 
+// Voluntários
+router.get('/voluntarios', voluntarioController.listar);
+router.post('/voluntarios', voluntarioController.criar);
+
 export default router;
