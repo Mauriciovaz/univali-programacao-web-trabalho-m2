@@ -2,19 +2,32 @@
 import ButtonComponent from '@/components/ButtonComponent.vue';
 import InfoComponent from '@/components/InfoComponent.vue';
 import ToDoComponent from '@/components/ToDoComponent.vue';
-import { CalendarDays, CircleDollarSign, MoveRight } from '@lucide/vue';
+import { CalendarDays, CircleDollarSign, MoveRight, User } from '@lucide/vue';
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const data = ref({});
+const donates = ref([]);
+
 let result = 0;
 
 const id = route.params.id;
+
 onMounted(async () => {
     try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/campanhas/${id}`);
-        data.value = await res.json();
+        const [resCampaign, resDonates] = await Promise.all([
+            fetch(`${import.meta.env.VITE_API_URL}/campanhas/${id}`),
+            fetch(`${import.meta.env.VITE_API_URL}/doacoes?campanhaId=${id}`)
+        ]);
+
+        const [campaign, donatesResult] = await Promise.all([
+            resCampaign.json(),
+            resDonates.json()
+        ]);
+
+        data.value = campaign;
+        donates.value = donatesResult;
 
         result = Number((100 * Number(data.value.valorArrecadado)) / Number(data.value.metaValor)).toFixed(0);
 
@@ -76,7 +89,32 @@ onMounted(async () => {
                 </div>
             </div>
         </div>
-
+        <div class="s-donates container">
+            <div class="s-donates wrapper">
+                <div class="donates">
+                    <h2>Doações</h2>
+                    <div class="wrapper">
+                        <div v-for="d in donates" :key="d.id">
+                            <div class="item">
+                                <div class="icon">
+                                    <User />
+                                </div>
+                                <div class="info">
+                                    <p class="type"> <span>Tipo:</span> {{ d.tipo }}</p>
+                                    <p class="money" v-if="d.tipo === 'dinheiro'"> R$ {{ String(d.valor ?? 0) }}</p>
+                                    <!-- <p class="description" v-if="d.tipo !== 'dinheiro'"> {{ d.descricao ?? '' }}</p> -->
+                                </div>
+                                <p class="date"> {{
+                                    `${d.data.split('-')[2]}/${d.data.split('-')[1]}/${d.data.split('-')[0]}` }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="volunteers">
+                    <h2>Voluntários</h2>
+                </div>
+            </div>
+        </div>
         <ToDoComponent />
         <InfoComponent />
     </div>
@@ -257,10 +295,86 @@ onMounted(async () => {
             }
         }
 
-        a::after{
+        a::after {
             display: none;
         }
     }
 
+}
+
+.s-donates {
+    &.container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 80px;
+        background-color: var(--white);
+    }
+
+    &.wrapper {
+        width: 100%;
+        max-width: 1248px;
+        padding: 32px 24px 32px 24px;
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: 1fr 1fr;
+        color: var(--green-dark);
+
+        h2 {
+            font-weight: 700;
+            font-size: 2rem;
+        }
+
+        .donates {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            border-right: 1px solid var(--green-dark);
+            padding: 1rem;
+
+            .wrapper {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                max-height: 500px;
+                overflow-y: auto;
+
+                .item {
+                    display: flex;
+                    width: 100%;
+                    padding: 1rem;
+                    justify-content: space-between;
+                    align-items: center;
+                    background-color: var(--green-light);
+                    border-radius: 1rem;
+
+                    .icon {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        padding: 1rem;
+                        border-radius: 6rem;
+                        background-color: var(--white);
+                    }
+
+                    .type{
+                        font-weight: 700;
+                    }
+
+                    .date{
+                        padding: 1rem;
+                        border-radius: 1rem;
+                        background-color: var(--green);
+                        color: var(--white);
+                    }
+                }
+            }
+        }
+
+    }
 }
 </style>
