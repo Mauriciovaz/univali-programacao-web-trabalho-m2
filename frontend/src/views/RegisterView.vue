@@ -8,12 +8,40 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute();
 
-let optionSelect = ref('donate');
+let message = ref('');
+
+let optionSelect = ref('register');
+let donateType = ref('money');
+
 let donateObj = ref({
-    value: 0,
+    value: null,
+    type: donateType.value,
+    description: null,
     name: '',
-    email: ''
+    email: '',
+    phone: '',
 });
+
+let volunteeringObj = ref({
+    name: '',
+    email: '',
+    phone: '',
+    availability: ''
+});
+
+let campaignObj = ref({
+    titulo: '',
+    descricao: '',
+    categoria: '',
+    metaValor: null,
+    valorArrecadado: 0,
+    dataInicio: '',
+    dataFim: '',
+    status: 'ativa',
+    vagasVoluntarios: null,
+    imagemUrl: ''
+});
+
 const changeOption = (option) => {
     optionSelect.value = option;
 };
@@ -22,18 +50,26 @@ const changeDonateObj = (value) => {
     donateObj.value.value = value;
 };
 
+const changeAvailability = (value) => {
+    volunteeringObj.value.availability = value;
+};
+
 const campaignData = ref({});
 let type = ref('');
-let donateType = ref('money');
+
 
 const changeDonateType = (type) => {
     donateType.value = type;
+    donateObj.value.type = type;
+    donateObj.value.value = null;
+    donateObj.value.description = null;
+
+    document.querySelector('#description').value = '';
 };
 
 onMounted(async () => {
     try {
         const campaign = route.query.campanha;
-
         if (!campaign) {
             optionSelect.value = 'register';
         } else {
@@ -48,8 +84,6 @@ onMounted(async () => {
                 optionSelect.value = 'donate';
             }
         }
-
-
     } catch (err) {
         console.log(err);
     } finally {
@@ -57,6 +91,83 @@ onMounted(async () => {
     }
 
 });
+
+async function newDonate() {
+    try {
+        const { description, email, name, phone, type, value } = donateObj.value;
+        if (!email || !name || !phone) {
+            alert('Preencha todos os dados');
+        } else {
+            if (type === 'money' && !value) {
+                alert('Selecione o valor');
+            } else if (type === 'other' && !description) {
+                alert('Preencha a descrição');
+            } else {
+                const parseData = {
+                    campanhaId: Number(route.query.campanha),
+                    nome: name,
+                    email,
+                    telefone: String(phone),
+                    tipo: type === 'money' ? 'dinheiro' : 'item',
+                    valor: value ?? 0,
+                    descricao: description
+                };
+                const res = await fetch(`${import.meta.env.VITE_API_URL}/doacoes`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(parseData)
+                });
+
+                const result = await res.json();
+
+                if (!res.ok) {
+                    message.value = result.erro;
+                } else {
+                    message.value = result.mensagem;
+                }
+            }
+        }
+    } catch (err) {
+        message.value = err.response.data.erro;
+    }
+}
+
+async function newVolunteering() {
+    try {
+        const { availability, email, name, phone } = volunteeringObj.value;
+        if (!email || !name || !phone) {
+            alert('Preencha todos os dados');
+        } else {
+            const parseData = {
+                campanhaId: Number(route.query.campanha),
+                nome: name,
+                email,
+                telefone: String(phone),
+                disponibilidade: availability
+            };
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/voluntarios`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(parseData)
+            });
+
+            const result = await res.json();
+
+            if (!res.ok) {
+                message.value = result.erro;
+            } else {
+                message.value = result.mensagem;
+            }
+        }
+    } catch (err) {
+        message.value = err.response.data.erro;
+        console.log(err.response.data.erro);
+    }
+}
 
 </script>
 
@@ -98,14 +209,18 @@ onMounted(async () => {
                     voluntariar
                 </p>
 
+                <h2 v-if="!!message">{{ message }}</h2>
+
                 <div class="form container">
                     <div class="donate" v-if="optionSelect === 'donate'">
                         <h2>Dados da Doação</h2>
                         <form>
                             <p>Tipo de doação</p>
                             <div class="type">
-                                <div :class="`money ${donateType === 'money' ? 'select' : ''}`" @click="() => changeDonateType('money')">Dinheiro</div>
-                                <div :class="`other ${donateType === 'other' ? 'select' : ''}`" @click="() => changeDonateType('other')">Outro</div>
+                                <div :class="`money ${donateType === 'money' ? 'select' : ''}`"
+                                    @click="() => changeDonateType('money')">Dinheiro</div>
+                                <div :class="`other ${donateType === 'other' ? 'select' : ''}`"
+                                    @click="() => changeDonateType('other')">Outro</div>
                             </div>
                             <p v-if="donateType === 'money'">Valor da doação</p>
                             <div class="values" v-if="donateType === 'money'">
@@ -132,20 +247,115 @@ onMounted(async () => {
                             </div>
 
                             <p v-if="donateType === 'other'">Descreva o que será doado</p>
-                            <textarea id="description" v-if="donateType === 'other'" rows="4"></textarea>
+                            <textarea id="description" v-if="donateType === 'other'" rows="4"
+                                @input="(e) => donateObj.description = e.target.value"></textarea>
 
                             <p>Nome Completo</p>
-                            <input type="text" id="name">
+                            <input type="text" id="name" @input="(e) => donateObj.name = e.target.value">
 
                             <p>E-mail</p>
-                            <input type="text" id="email">
+                            <input type="text" id="email" @input="(e) => donateObj.email = e.target.value">
 
                             <p>Telefone</p>
-                            <input type="text" id="telefone" @input="(e) => e.target.value = e.target.value.replace(/[^0-9]/g, '')" maxlength="11">
+                            <input type="text" id="telefone" @input="(e) => {
+                                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                                donateObj.phone = e.target.value
+                            }" maxlength="11">
 
                             <ButtonComponent :text="'Enviar'" :icon="MoveRight" :type="'button'" @click="(e) => {
                                 e.preventDefault();
-                                // submit
+                                newDonate();
+                            }" />
+                        </form>
+                    </div>
+                    <div class="volunteering" v-if="optionSelect === 'volunteering'">
+                        <h2>Dados Voluntário</h2>
+                        <form>
+                            <p>Disponibilidade</p>
+                            <div class="availability">
+                                <div :class="`value ${volunteeringObj.availability === 'segunda' ? 'select' : ''}`"
+                                    @click="() => changeAvailability('segunda')">
+                                    Segunda
+                                </div>
+                                <div :class="`value ${volunteeringObj.availability === 'terca' ? 'select' : ''}`"
+                                    @click="() => changeAvailability('terca')">
+                                    Terça
+                                </div>
+                                <div :class="`value ${volunteeringObj.availability === 'quarta' ? 'select' : ''}`"
+                                    @click="() => changeAvailability('quarta')">
+                                    Quarta
+                                </div>
+                                <div :class="`value ${volunteeringObj.availability === 'quinta' ? 'select' : ''}`"
+                                    @click="() => changeAvailability('quinta')">
+                                    Quinta
+                                </div>
+                                <div :class="`value ${volunteeringObj.availability === 'sexta' ? 'select' : ''}`"
+                                    @click="() => changeAvailability('sexta')">
+                                    Sexta
+                                </div>
+                                <div :class="`value ${volunteeringObj.availability === 'sabado' ? 'select' : ''}`"
+                                    @click="() => changeAvailability('sabado')">
+                                    Sábado
+                                </div>
+                                <div :class="`value ${volunteeringObj.availability === 'domingo' ? 'select' : ''}`"
+                                    @click="() => changeAvailability('domingo')">
+                                    Domingo
+                                </div>
+                            </div>
+                            <p>Nome Completo</p>
+                            <input type="text" id="name" @input="(e) => volunteeringObj.name = e.target.value">
+
+                            <p>E-mail</p>
+                            <input type="text" id="email" @input="(e) => volunteeringObj.email = e.target.value">
+
+                            <p>Telefone</p>
+                            <input type="text" id="telefone" @input="(e) => {
+                                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                                volunteeringObj.phone = e.target.value
+                            }" maxlength="11">
+
+                            <ButtonComponent :text="'Enviar'" :icon="MoveRight" :type="'button'" @click="(e) => {
+                                e.preventDefault();
+                                newVolunteering();
+                            }" />
+                        </form>
+                    </div>
+                    <div class="register" v-if="optionSelect === 'register'">
+                        <h2>Dados da Campanha</h2>
+                        <form>
+                            <p>Titulo</p>
+                            <input type="text" id="title" @input="(e) => campaignObj.titulo = e.target.value">
+
+                            <p>Descrição</p>
+                            <textarea id="description" rows="4"
+                                @input="(e) => campaignObj.descricao = e.target.value"></textarea>
+
+                            <p>Categoria</p>
+                            <div class="type">
+                                <div :class="`food ${campaignObj.categoria === 'alimentos' ? 'select' : ''}`"
+                                    @click="() => campaignObj.categoria = 'alimentos'">Alimentos</div>
+                                <div :class="`clothing ${campaignObj.categoria === 'roupas' ? 'select' : ''}`"
+                                    @click="() => campaignObj.categoria = 'roupas'">Roupas</div>
+                            </div>
+
+                            <p>Meta de valor</p>
+                            <input type="text" id="meta" @input="(e) => {
+                                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                                campaignObj.metaValor = e.target.value
+                            }" maxlength="6">
+
+                            <p>Qtde. vagas de voluntários</p>
+                            <input type="text" id="vagas" @input="(e) => {
+                                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                                campaignObj.vagasVoluntarios = e.target.value
+                            }" maxlength="6">
+
+                            <p>URL da imagem</p>
+                            <input type="text" id="title" @input="(e) => campaignObj.imagemUrl = e.target.value">
+
+                            <ButtonComponent :text="'Enviar'" :icon="MoveRight" :type="'button'" @click="(e) => {
+                                e.preventDefault();
+                                newVolunteering();
                             }" />
                         </form>
                     </div>
@@ -297,6 +507,80 @@ onMounted(async () => {
                                 padding: 1rem 0;
                                 border-radius: 1rem;
                                 border: 1px solid var(--green-dark);
+                                cursor: pointer;
+
+                                &:hover,
+                                &.select {
+                                    background-color: var(--green-dark);
+                                    color: var(--white);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .volunteering {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+
+                    form {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 1rem;
+
+                        .availability {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            gap: 1rem;
+
+                            .value {
+                                width: 100%;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                font-weight: 700;
+                                padding: 1rem 0;
+                                border-radius: 1rem;
+                                border: 1px solid var(--green-dark);
+                                cursor: pointer;
+
+                                &:hover,
+                                &.select {
+                                    background-color: var(--green-dark);
+                                    color: var(--white);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .register {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1rem;
+
+                    form {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 1rem;
+
+                        .type {
+                            display: flex;
+                            width: 100%;
+                            justify-content: start;
+                            gap: 1rem;
+
+                            .food,
+                            .clothing {
+                                padding: 1rem 2rem;
+                                display: flex;
+                                align-items: center;
+                                font-weight: bold;
+                                font-size: 1.2rem;
+                                border: 1px solid var(--green-dark);
+                                border-radius: 1rem;
                                 cursor: pointer;
 
                                 &:hover,

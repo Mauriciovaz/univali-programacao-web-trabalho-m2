@@ -21,6 +21,11 @@ import { HandHeart } from '@lucide/vue';
                         Inicio
                     </RouterLink>
                 </li>
+                <li>
+                    <a href="/cadastrar" >
+                        Cadastrar Campanha
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
