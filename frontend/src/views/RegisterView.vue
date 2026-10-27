@@ -42,6 +42,23 @@ let campaignObj = ref({
     imagemUrl: ''
 });
 
+const donateName = ref(null);
+const donateDescription = ref(null);
+const donateEmail = ref(null);
+const donatePhone = ref(null);
+
+const volunteeringName = ref(null);
+const volunteeringEmail = ref(null);
+const volunteeringPhone = ref(null);
+
+const registerTitle = ref(null);
+const registerDescription = ref(null);
+const registerMeta = ref(null);
+const registerVolunteering = ref(null);
+const registerImage = ref(null);
+const registerDateInitial = ref(null);
+const registerDateEnd = ref(null);
+
 const changeOption = (option) => {
     optionSelect.value = option;
 };
@@ -126,11 +143,27 @@ async function newDonate() {
                     message.value = result.erro;
                 } else {
                     message.value = result.mensagem;
+
+                    donateName.value.value = '';
+                    if (type !== 'money') {
+                        donateDescription.value.value = '';
+                    }
+                    donateEmail.value.value = '';
+                    donatePhone.value.value = '';
+
+                    donateObj.value = {
+                        value: null,
+                        type: donateType.value,
+                        description: null,
+                        name: '',
+                        email: '',
+                        phone: '',
+                    };
                 }
             }
         }
     } catch (err) {
-        message.value = err.response.data.erro;
+        console.log(err);
     }
 }
 
@@ -161,11 +194,21 @@ async function newVolunteering() {
                 message.value = result.erro;
             } else {
                 message.value = result.mensagem;
+
+                volunteeringName.value.value = '';
+                volunteeringEmail.value.value = '';
+                volunteeringPhone.value.value = '';
+
+                volunteeringObj.value = {
+                    name: '',
+                    email: '',
+                    phone: '',
+                    availability: ''
+                };
             }
         }
     } catch (err) {
-        message.value = err.response.data.erro;
-        console.log(err.response.data.erro);
+        console.log(err);
     }
 }
 
@@ -193,11 +236,31 @@ async function newRegister() {
                 message.value = result.erro;
             } else {
                 message.value = 'Campanha registrada com sucesso';
+
+                registerTitle.value.value = '';
+                registerDescription.value.value = '';
+                registerMeta.value.value = '';
+                registerVolunteering.value.value = '';
+                registerImage.value.value = '';
+                registerDateInitial.value.value = '';
+                registerDateEnd.value.value = '';
+
+                campaignObj.value = {
+                    titulo: '',
+                    descricao: '',
+                    categoria: '',
+                    metaValor: null,
+                    valorArrecadado: 0,
+                    dataInicio: '',
+                    dataFim: '',
+                    status: 'ativa',
+                    vagasVoluntarios: null,
+                    imagemUrl: ''
+                };
             }
         }
     } catch (err) {
-        message.value = err.response.data.erro;
-        console.log(err.response.data.erro);
+        console.log(err);
     }
 }
 
@@ -280,19 +343,22 @@ async function newRegister() {
 
                             <p v-if="donateType === 'other'">Descreva o que será doado</p>
                             <textarea id="description" v-if="donateType === 'other'" rows="4"
-                                @input="(e) => donateObj.description = e.target.value"></textarea>
+                                @input="(e) => donateObj.description = e.target.value"
+                                ref="donateDescription"></textarea>
 
                             <p>Nome Completo</p>
-                            <input type="text" id="name" @input="(e) => donateObj.name = e.target.value">
+                            <input type="text" id="name" @input="(e) => donateObj.name = e.target.value"
+                                ref="donateName">
 
                             <p>E-mail</p>
-                            <input type="text" id="email" @input="(e) => donateObj.email = e.target.value">
+                            <input type="text" id="email" @input="(e) => donateObj.email = e.target.value"
+                                ref="donateEmail">
 
                             <p>Telefone</p>
                             <input type="text" id="telefone" @input="(e) => {
                                 e.target.value = e.target.value.replace(/[^0-9]/g, '');
                                 donateObj.phone = e.target.value
-                            }" maxlength="11">
+                            }" maxlength="11" ref="donatePhone">
 
                             <ButtonComponent :text="'Enviar'" :icon="MoveRight" :type="'button'" @click="(e) => {
                                 e.preventDefault();
@@ -335,16 +401,18 @@ async function newRegister() {
                                 </div>
                             </div>
                             <p>Nome Completo</p>
-                            <input type="text" id="name" @input="(e) => volunteeringObj.name = e.target.value">
+                            <input type="text" id="name" @input="(e) => volunteeringObj.name = e.target.value"
+                                ref="volunteeringName">
 
                             <p>E-mail</p>
-                            <input type="text" id="email" @input="(e) => volunteeringObj.email = e.target.value">
+                            <input type="text" id="email" @input="(e) => volunteeringObj.email = e.target.value"
+                                ref="volunteeringEmail">
 
                             <p>Telefone</p>
                             <input type="text" id="telefone" @input="(e) => {
                                 e.target.value = e.target.value.replace(/[^0-9]/g, '');
                                 volunteeringObj.phone = e.target.value
-                            }" maxlength="11">
+                            }" maxlength="11" ref="volunteeringPhone">
 
                             <ButtonComponent :text="'Enviar'" :icon="MoveRight" :type="'button'" @click="(e) => {
                                 e.preventDefault();
@@ -364,11 +432,12 @@ async function newRegister() {
                             </div>
 
                             <p>Titulo</p>
-                            <input type="text" id="title" @input="(e) => campaignObj.titulo = e.target.value">
+                            <input type="text" id="title" @input="(e) => campaignObj.titulo = e.target.value"
+                                ref="registerTitle">
 
                             <p>Descrição</p>
-                            <textarea id="description" rows="4"
-                                @input="(e) => campaignObj.descricao = e.target.value"></textarea>
+                            <textarea id="description" rows="4" @input="(e) => campaignObj.descricao = e.target.value"
+                                ref="registerDescription"></textarea>
 
                             <div class="wrapper">
                                 <div>
@@ -376,7 +445,7 @@ async function newRegister() {
                                     <input type="text" id="meta" @input="(e) => {
                                         e.target.value = e.target.value.replace(/[^0-9]/g, '');
                                         campaignObj.metaValor = e.target.value
-                                    }" maxlength="6">
+                                    }" maxlength="6" ref="registerMeta">
                                 </div>
 
                                 <div>
@@ -384,13 +453,14 @@ async function newRegister() {
                                     <input type="text" id="vagas" @input="(e) => {
                                         e.target.value = e.target.value.replace(/[^0-9]/g, '');
                                         campaignObj.vagasVoluntarios = e.target.value
-                                    }" maxlength="6">
+                                    }" maxlength="6" ref="registerVolunteering">
                                 </div>
 
                             </div>
 
                             <p>URL da imagem</p>
-                            <input type="text" id="title" @input="(e) => campaignObj.imagemUrl = e.target.value">
+                            <input type="text" id="title" @input="(e) => campaignObj.imagemUrl = e.target.value"
+                                ref="registerImage">
 
                             <div class="wrapper">
                                 <div>
@@ -401,7 +471,7 @@ async function newRegister() {
                                             .replace(/^(\d{2})\/(\d{2})(\d)/, '$1/$2/$3')
                                             .slice(0, 10);
                                         campaignObj.dataInicio = e.target.value
-                                    }" placeholder="00/00/0000">
+                                    }" placeholder="00/00/0000" ref="registerDateInitial">
                                 </div>
 
                                 <div>
@@ -412,7 +482,7 @@ async function newRegister() {
                                             .replace(/^(\d{2})\/(\d{2})(\d)/, '$1/$2/$3')
                                             .slice(0, 10);
                                         campaignObj.dataFim = e.target.value
-                                    }" placeholder="00/00/0000">
+                                    }" placeholder="00/00/0000" ref="registerDateEnd">
                                 </div>
 
                             </div>
