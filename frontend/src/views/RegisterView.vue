@@ -172,7 +172,7 @@ async function newDonate() {
 async function newVolunteering() {
     try {
         const { availability, email, name, phone } = volunteeringObj.value;
-        if (!email || !name || !phone) {
+        if (!email || !name || !phone || !availability) {
             alert('Preencha todos os dados');
         } else {
             const parseData = {

@@ -87,7 +87,7 @@ onMounted(async () => {
                         </div>
                         <RouterLink :to="`/cadastrar?campanha=${id}`">
                             <ButtonComponent :text="'Fazer uma doação'" :icon="MoveRight"
-                                v-if="data.categoria === 'roupas' || data.categoria === 'alimentos'" />
+                                v-if="data.status !== 'encerrada' && data.categoria === 'roupas' || data.categoria === 'alimentos'" />
                         </RouterLink>
                     </div>
                 </div>
