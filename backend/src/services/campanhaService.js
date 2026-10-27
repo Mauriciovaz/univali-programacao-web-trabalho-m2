@@ -36,7 +36,7 @@ function criar(dados) {
         id: campanhas.length ? Math.max(...campanhas.map(c => c.id)) + 1 : 1,
         titulo: dados.titulo.trim(),
         descricao: dados.descricao,
-        categoria: dados.caregoria,
+        categoria: dados.categoria,
         metaValor: Number(dados.metaValor),
         valorArrecadado: 0,
         dataInicio: new Date().toISOString().slice(0, 10),

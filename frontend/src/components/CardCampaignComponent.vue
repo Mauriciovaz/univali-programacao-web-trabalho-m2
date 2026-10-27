@@ -34,6 +34,12 @@ const props = defineProps({
 
 const result = Number((100 * Number(props.value)) / Number(props.meta)).toFixed(0);
 
+const limit = 100;
+
+const descriptionParse = props.description.length > limit
+    ? props.description.slice(0, limit) + '...'
+    : props.description;
+
 </script>
 <template>
     <div :class="`c-campaign-card ${status}`">
@@ -46,7 +52,7 @@ const result = Number((100 * Number(props.value)) / Number(props.meta)).toFixed(
                 <span>{{ category }}</span>
             </div>
             <div class="title">{{ title }}</div>
-            <div class="description">{{ description }}</div>
+            <div class="description">{{ descriptionParse }}</div>
             <progress max="100" :value="Number(result)"></progress>
             <p class="meta">{{ result }}% da meta</p>
             <div class="donors">

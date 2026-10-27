@@ -109,9 +109,10 @@ onMounted(async () => {
 
             img {
                 width: 100%;
-                height: 500px;
+                height: 100%;
                 object-fit: cover;
                 border-radius: 1rem;
+                object-position: center;
             }
 
             .content {

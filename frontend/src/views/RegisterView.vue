@@ -169,6 +169,38 @@ async function newVolunteering() {
     }
 }
 
+async function newRegister() {
+    try {
+        const { categoria, dataFim, dataInicio, descricao, imagemUrl, metaValor, titulo, vagasVoluntarios } = campaignObj.value;
+        if (!categoria || !dataFim || !dataInicio || !descricao || !imagemUrl || !metaValor || !titulo || !vagasVoluntarios) {
+            alert('Preencha todos os dados');
+        } else {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/campanhas`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    ...campaignObj.value,
+                    dataInicio: `${campaignObj.value.dataInicio.split('/')[2]}-${campaignObj.value.dataInicio.split('/')[1]}-${campaignObj.value.dataInicio.split('/')[0]}`,
+                    dataFim: `${campaignObj.value.dataFim.split('/')[2]}-${campaignObj.value.dataFim.split('/')[1]}-${campaignObj.value.dataFim.split('/')[0]}`
+                })
+            });
+
+            const result = await res.json();
+
+            if (!res.ok) {
+                message.value = result.erro;
+            } else {
+                message.value = 'Campanha registrada com sucesso';
+            }
+        }
+    } catch (err) {
+        message.value = err.response.data.erro;
+        console.log(err.response.data.erro);
+    }
+}
+
 </script>
 
 <template>
@@ -323,13 +355,6 @@ async function newVolunteering() {
                     <div class="register" v-if="optionSelect === 'register'">
                         <h2>Dados da Campanha</h2>
                         <form>
-                            <p>Titulo</p>
-                            <input type="text" id="title" @input="(e) => campaignObj.titulo = e.target.value">
-
-                            <p>Descrição</p>
-                            <textarea id="description" rows="4"
-                                @input="(e) => campaignObj.descricao = e.target.value"></textarea>
-
                             <p>Categoria</p>
                             <div class="type">
                                 <div :class="`food ${campaignObj.categoria === 'alimentos' ? 'select' : ''}`"
@@ -338,24 +363,63 @@ async function newVolunteering() {
                                     @click="() => campaignObj.categoria = 'roupas'">Roupas</div>
                             </div>
 
-                            <p>Meta de valor</p>
-                            <input type="text" id="meta" @input="(e) => {
-                                e.target.value = e.target.value.replace(/[^0-9]/g, '');
-                                campaignObj.metaValor = e.target.value
-                            }" maxlength="6">
+                            <p>Titulo</p>
+                            <input type="text" id="title" @input="(e) => campaignObj.titulo = e.target.value">
 
-                            <p>Qtde. vagas de voluntários</p>
-                            <input type="text" id="vagas" @input="(e) => {
-                                e.target.value = e.target.value.replace(/[^0-9]/g, '');
-                                campaignObj.vagasVoluntarios = e.target.value
-                            }" maxlength="6">
+                            <p>Descrição</p>
+                            <textarea id="description" rows="4"
+                                @input="(e) => campaignObj.descricao = e.target.value"></textarea>
+
+                            <div class="wrapper">
+                                <div>
+                                    <p>Meta de valor</p>
+                                    <input type="text" id="meta" @input="(e) => {
+                                        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                                        campaignObj.metaValor = e.target.value
+                                    }" maxlength="6">
+                                </div>
+
+                                <div>
+                                    <p>Qtde. vagas de voluntários</p>
+                                    <input type="text" id="vagas" @input="(e) => {
+                                        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                                        campaignObj.vagasVoluntarios = e.target.value
+                                    }" maxlength="6">
+                                </div>
+
+                            </div>
 
                             <p>URL da imagem</p>
                             <input type="text" id="title" @input="(e) => campaignObj.imagemUrl = e.target.value">
 
+                            <div class="wrapper">
+                                <div>
+                                    <p>Data inicial</p>
+                                    <input type="text" id="meta" @input="(e) => {
+                                        e.target.value = e.target.value.replace(/\D/g, '')
+                                            .replace(/^(\d{2})(\d)/, '$1/$2')
+                                            .replace(/^(\d{2})\/(\d{2})(\d)/, '$1/$2/$3')
+                                            .slice(0, 10);
+                                        campaignObj.dataInicio = e.target.value
+                                    }" placeholder="00/00/0000">
+                                </div>
+
+                                <div>
+                                    <p>Data Final</p>
+                                    <input type="text" id="meta" @input="(e) => {
+                                        e.target.value = e.target.value.replace(/\D/g, '')
+                                            .replace(/^(\d{2})(\d)/, '$1/$2')
+                                            .replace(/^(\d{2})\/(\d{2})(\d)/, '$1/$2/$3')
+                                            .slice(0, 10);
+                                        campaignObj.dataFim = e.target.value
+                                    }" placeholder="00/00/0000">
+                                </div>
+
+                            </div>
+
                             <ButtonComponent :text="'Enviar'" :icon="MoveRight" :type="'button'" @click="(e) => {
                                 e.preventDefault();
-                                newVolunteering();
+                                newRegister();
                             }" />
                         </form>
                     </div>
@@ -588,6 +652,18 @@ async function newVolunteering() {
                                     background-color: var(--green-dark);
                                     color: var(--white);
                                 }
+                            }
+                        }
+
+                        .wrapper {
+                            display: flex;
+                            gap: 1rem;
+
+                            div {
+                                display: flex;
+                                flex-direction: column;
+                                gap: 1rem;
+                                width: 100%;
                             }
                         }
                     }
