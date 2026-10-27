@@ -1,4 +1,6 @@
 <script setup>
+import ToDoComponent from '@/components/ToDoComponent.vue';
+import InfoComponent from '@/components/InfoComponent.vue';
 import ButtonComponent from '@/components/ButtonComponent.vue';
 import { Heart, Plus, Users, MoveRight, TriangleAlert } from '@lucide/vue';
 import { onMounted, ref } from 'vue';
@@ -22,6 +24,11 @@ const changeDonateObj = (value) => {
 
 const campaignData = ref({});
 let type = ref('');
+let donateType = ref('money');
+
+const changeDonateType = (type) => {
+    donateType.value = type;
+};
 
 onMounted(async () => {
     try {
@@ -86,14 +93,22 @@ onMounted(async () => {
                     </div>
                 </div>
 
-                <p v-if="campaignData.status === 'encerrada'" class="warning"><TriangleAlert size="1.7rem"/> Campanha enecrrada, não é possível realizar doações ou se voluntariar</p>
+                <p v-if="campaignData.status === 'encerrada'" class="warning">
+                    <TriangleAlert size="1.7rem" /> Campanha enecrrada, não é possível realizar doações ou se
+                    voluntariar
+                </p>
 
                 <div class="form container">
                     <div class="donate" v-if="optionSelect === 'donate'">
                         <h2>Dados da Doação</h2>
                         <form>
-                            <p>Valor da doação</p>
-                            <div class="values">
+                            <p>Tipo de doação</p>
+                            <div class="type">
+                                <div :class="`money ${donateType === 'money' ? 'select' : ''}`" @click="() => changeDonateType('money')">Dinheiro</div>
+                                <div :class="`other ${donateType === 'other' ? 'select' : ''}`" @click="() => changeDonateType('other')">Outro</div>
+                            </div>
+                            <p v-if="donateType === 'money'">Valor da doação</p>
+                            <div class="values" v-if="donateType === 'money'">
                                 <div :class="`value ${donateObj.value === 25 ? 'select' : ''}`"
                                     @click="() => changeDonateObj(25)">
                                     R$ 25
@@ -115,11 +130,18 @@ onMounted(async () => {
                                     R$ 300
                                 </div>
                             </div>
+
+                            <p v-if="donateType === 'other'">Descreva o que será doado</p>
+                            <textarea id="description" v-if="donateType === 'other'" rows="4"></textarea>
+
                             <p>Nome Completo</p>
                             <input type="text" id="name">
 
                             <p>E-mail</p>
                             <input type="text" id="email">
+
+                            <p>Telefone</p>
+                            <input type="text" id="telefone" @input="(e) => e.target.value = e.target.value.replace(/[^0-9]/g, '')" maxlength="11">
 
                             <ButtonComponent :text="'Enviar'" :icon="MoveRight" :type="'button'" @click="(e) => {
                                 e.preventDefault();
@@ -130,6 +152,8 @@ onMounted(async () => {
                 </div>
             </div>
         </div>
+        <ToDoComponent />
+        <InfoComponent />
     </div>
 </template>
 
@@ -233,6 +257,31 @@ onMounted(async () => {
                         flex-direction: column;
                         gap: 1rem;
 
+                        .type {
+                            display: flex;
+                            width: 100%;
+                            justify-content: start;
+                            gap: 1rem;
+
+                            .money,
+                            .other {
+                                padding: 1rem 2rem;
+                                display: flex;
+                                align-items: center;
+                                font-weight: bold;
+                                font-size: 1.2rem;
+                                border: 1px solid var(--green-dark);
+                                border-radius: 1rem;
+                                cursor: pointer;
+
+                                &:hover,
+                                &.select {
+                                    background-color: var(--green-dark);
+                                    color: var(--white);
+                                }
+                            }
+                        }
+
                         .values {
                             display: flex;
                             justify-content: space-between;
@@ -262,7 +311,7 @@ onMounted(async () => {
             }
         }
 
-        .warning{
+        .warning {
             font-size: 1.2rem;
             color: var(--green-dark);
             font-weight: 700;
