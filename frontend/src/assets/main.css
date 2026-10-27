@@ -95,3 +95,18 @@ input, textarea {
   }
 
 }
+
+::-webkit-scrollbar {
+    background: var(--green-light);
+    width: 0.3125rem;
+    height: 0.3125rem;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--yellow);
+    outline: none;
+}
+
+::-webkit-scrollbar-thumb, ::-webkit-scrollbar-track {
+    border-radius: 1rem;
+}

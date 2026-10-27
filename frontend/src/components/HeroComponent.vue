@@ -7,7 +7,9 @@ import { MoveRight } from '@lucide/vue';
         <div class="c-hero wrapper">
             <h1>Pequenas ações <br> geram grandes <br> mudanças</h1>
             <h2>Doação, voluntariado e apoio a causas <br> que fazem a diferença na vida de muitas pessoas.</h2>
-            <ButtonComponent :text="`Quero ajudar`" :icon="MoveRight" />
+            <a href="#campaigns">
+                <ButtonComponent :text="`Ver campanhas`" :icon="MoveRight" />
+            </a>
         </div>
     </div>
 </template>
@@ -59,6 +61,10 @@ import { MoveRight } from '@lucide/vue';
         h2 {
             font-size: 1.5rem;
             color: var(--green-light);
+        }
+
+         a::after{
+            display: none;
         }
     }
 

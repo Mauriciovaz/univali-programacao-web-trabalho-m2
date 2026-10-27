@@ -9,6 +9,7 @@ import { useRoute } from 'vue-router';
 const route = useRoute();
 
 let message = ref('');
+let messageType = ref('success');
 
 let optionSelect = ref('register');
 let donateType = ref('money');
@@ -141,9 +142,10 @@ async function newDonate() {
 
                 if (!res.ok) {
                     message.value = result.erro;
+                    messageType.value = 'error';
                 } else {
                     message.value = result.mensagem;
-
+                    messageType.value = 'success';
                     donateName.value.value = '';
                     if (type !== 'money') {
                         donateDescription.value.value = '';
@@ -192,8 +194,10 @@ async function newVolunteering() {
 
             if (!res.ok) {
                 message.value = result.erro;
+                messageType.value = 'error';
             } else {
                 message.value = result.mensagem;
+                messageType.value = 'success';
 
                 volunteeringName.value.value = '';
                 volunteeringEmail.value.value = '';
@@ -234,8 +238,10 @@ async function newRegister() {
 
             if (!res.ok) {
                 message.value = result.erro;
+                messageType.value = 'error';
             } else {
                 message.value = 'Campanha registrada com sucesso';
+                messageType.value = 'success';
 
                 registerTitle.value.value = '';
                 registerDescription.value.value = '';
@@ -304,9 +310,9 @@ async function newRegister() {
                     voluntariar
                 </p>
 
-                <h2 v-if="!!message">{{ message }}</h2>
+                <h2 v-if="!!message" :class="`message ${messageType}`">{{ message }}</h2>
 
-                <div class="form container">
+                <div class="form container" v-if="campaignData.status !== 'encerrada'">
                     <div class="donate" v-if="optionSelect === 'donate'">
                         <h2>Dados da Doação</h2>
                         <form>
@@ -547,6 +553,22 @@ async function newRegister() {
                 p {
                     font-size: 1.4rem;
                 }
+            }
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 1rem;
+            color: var(--white);
+
+            &.success {
+                color: var(--white);
+                background-color: var(--green);
+            }
+
+            &.error {
+                color: var(--green-dark);
+                background-color: var(--yellow);
             }
         }
 

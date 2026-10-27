@@ -2,13 +2,14 @@
 import ButtonComponent from '@/components/ButtonComponent.vue';
 import InfoComponent from '@/components/InfoComponent.vue';
 import ToDoComponent from '@/components/ToDoComponent.vue';
-import { CalendarDays, CircleDollarSign, MoveRight, User } from '@lucide/vue';
+import { CalendarDays, CircleDollarSign, MoveRight, User, Handshake } from '@lucide/vue';
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const data = ref({});
 const donates = ref([]);
+const volunteers = ref([]);
 
 let result = 0;
 
@@ -16,18 +17,21 @@ const id = route.params.id;
 
 onMounted(async () => {
     try {
-        const [resCampaign, resDonates] = await Promise.all([
+        const [resCampaign, resDonates, resVolunteers] = await Promise.all([
             fetch(`${import.meta.env.VITE_API_URL}/campanhas/${id}`),
-            fetch(`${import.meta.env.VITE_API_URL}/doacoes?campanhaId=${id}`)
+            fetch(`${import.meta.env.VITE_API_URL}/doacoes?campanhaId=${id}`),
+            fetch(`${import.meta.env.VITE_API_URL}/voluntarios?campanhaId=${id}`)
         ]);
 
-        const [campaign, donatesResult] = await Promise.all([
+        const [campaign, donatesResult, volunteersResult] = await Promise.all([
             resCampaign.json(),
-            resDonates.json()
+            resDonates.json(),
+            resVolunteers.json()
         ]);
 
         data.value = campaign;
         donates.value = donatesResult;
+        volunteers.value = volunteersResult;
 
         result = Number((100 * Number(data.value.valorArrecadado)) / Number(data.value.metaValor)).toFixed(0);
 
@@ -76,7 +80,7 @@ onMounted(async () => {
                                 <p class="title">Período</p>
                                 <p>de {{
                                     `${String(data.dataInicio).split('-')[2]}/${String(data.dataInicio).split('-')[1]}/${String(data.dataInicio).split('-')[0]}`
-                                    }} a {{
+                                }} a {{
                                         `${String(data.dataFim).split('-')[2]}/${String(data.dataFim).split('-')[1]}/${String(data.dataFim).split('-')[0]}`
                                     }}</p>
                             </div>
@@ -93,6 +97,7 @@ onMounted(async () => {
             <div class="s-donates wrapper">
                 <div class="donates">
                     <h2>Doações</h2>
+                    <p v-if="donates.length === 0">Nenhuma doação realizada no momento</p>
                     <div class="wrapper">
                         <div v-for="d in donates" :key="d.id">
                             <div class="item">
@@ -112,6 +117,22 @@ onMounted(async () => {
                 </div>
                 <div class="volunteers">
                     <h2>Voluntários</h2>
+                    <p v-if="volunteers.length === 0">Nenhum voluntário no momento</p>
+                    <div class="wrapper">
+                        <div v-for="v in volunteers" :key="v.id">
+                            <div class="item">
+                                <div class="icon">
+                                    <Handshake />
+                                </div>
+                                <div class="info">
+                                    <p class="name"> <span>Nome:</span> {{ v.nome }}</p>
+                                    <p class="email"> <span>Email:</span> {{ v.email }}</p>
+                                    <!-- <p class="description" v-if="d.tipo !== 'dinheiro'"> {{ d.descricao ?? '' }}</p> -->
+                                </div>
+                                <p class="date"> {{ v.disponibilidade }} </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -342,6 +363,7 @@ onMounted(async () => {
                 gap: 1rem;
                 max-height: 500px;
                 overflow-y: auto;
+                padding: 0 0.5rem;
 
                 .item {
                     display: flex;
@@ -361,11 +383,11 @@ onMounted(async () => {
                         background-color: var(--white);
                     }
 
-                    .type{
+                    .type {
                         font-weight: 700;
                     }
 
-                    .date{
+                    .date {
                         padding: 1rem;
                         border-radius: 1rem;
                         background-color: var(--green);
@@ -375,6 +397,56 @@ onMounted(async () => {
             }
         }
 
+        .volunteers {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1rem;
+
+            .wrapper {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                max-height: 500px;
+                overflow-y: auto;
+                padding: 0 0.5rem;
+
+                .item {
+                    display: flex;
+                    width: 100%;
+                    padding: 1rem;
+                    justify-content: space-between;
+                    align-items: center;
+                    background-color: var(--green-light);
+                    border-radius: 1rem;
+
+                    .icon {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        padding: 1rem;
+                        border-radius: 6rem;
+                        background-color: var(--white);
+                    }
+
+                    .name,
+                    .email {
+                        span {
+                            font-weight: 700;
+                        }
+                    }
+
+                    .date {
+                        padding: 1rem;
+                        border-radius: 1rem;
+                        background-color: var(--green);
+                        color: var(--white);
+                    }
+                }
+            }
+        }
     }
 }
 </style>

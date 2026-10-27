@@ -26,7 +26,7 @@ onMounted(async () => {
 <template>
   <div class="p-home">
     <HeroComponent />
-    <div class="s-campaigns container">
+    <div class="s-campaigns container" id="campaigns">
       <div class="s-campaigns wrapper">
         <p class="s-campaigns title">Campanhas</p>
         <div class="s-campaigns campaigns">
@@ -73,8 +73,12 @@ onMounted(async () => {
     width: 100%;
     display: grid;
     grid-template-columns: repeat(3, auto);
-    gap: 1rem;
-    justify-content: space-between
+    gap: 0.7rem;
+    justify-content: space-between;
+    max-height: 1000px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 1rem;
   }
 }
 </style>
